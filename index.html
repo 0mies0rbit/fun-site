@@ -12,11 +12,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg: #aa0000; /* Deep aggressive red from the TV reference */
+            --bg: #aa0000; 
             --text: #fff;
             --accent: #000;
             --yellow: #ccff00; 
-            --blue: #00f0ff; 
+            --neon-green: #d4ff00;
+            --cyan: #00f0ff; 
+            --dark-red: #880000;
             --btn-stuff-color: #f7b029;
         }
 
@@ -85,28 +87,135 @@
         @keyframes scroll-left { to { transform: translateX(-50%); } } @keyframes scroll-right { to { transform: translateX(0); } }
         .slash-1 .marquee-inner { animation: scroll-left 8s linear infinite; } .slash-2 .marquee-inner { transform: translateX(-50%); animation: scroll-right 8s linear infinite; }
 
-        /* --- 4. VELOCITY GRID SECTION --- */
+        /* --- 4. NEW BRUTALIST GRID SECTION --- */
         .grid-wrapper { background: var(--accent); padding: 5vw; width: 100%; min-height: 150vh; z-index: 20; position: relative;}
-        .grid-deco { position: absolute; top: 10px; right: 20px; color: var(--yellow); font-size: 0.8rem; letter-spacing: 2px; }
         
-        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 250px; gap: 20px; width: 100%; perspective: 1000px; }
+        /* The thin neon tracking lines at the top and right */
+        .grid-deco { position: absolute; top: 3vw; left: 5vw; color: var(--neon-green); font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; z-index: 30;}
+        .grid-deco-side { position: absolute; top: 20vw; right: 2vw; color: var(--neon-green); font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; writing-mode: vertical-rl; z-index: 30;}
+        
+        .brutalist-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            grid-auto-rows: 250px; 
+            gap: 30px; 
+            max-width: 1400px; 
+            margin: 0 auto;
+            position: relative;
+            perspective: 1000px; 
+            margin-top: 5vh;
+        }
+
         .skew-container { display: flex; align-items: stretch; justify-content: stretch; will-change: transform; }
         
-        .bento-item { background: var(--bg); border: 4px solid var(--text); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.2s; }
-        .bento-item:hover { transform: scale(0.95) translateZ(50px); z-index: 50; box-shadow: 15px 15px 0px var(--yellow); }
+        /* The new stark blocks */
+        .block-item { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            transition: transform 0.2s; 
+        }
 
-        .span-2-col { grid-column: span 2; } .span-2-row { grid-row: span 2; } .span-3-col { grid-column: span 3; }
+        /* Specific borders mimicking the reference */
+        .border-red { border: 2px solid #ff3333; }
+        .border-white { border: 4px solid var(--text); }
+        .border-none { border: none; }
 
-        .bento-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); clip-path: inset(100% 0% 0% 0%); }
-        .bento-item:hover .bento-img { filter: invert(1); }
-        .bento-text { font-family: 'Anton', sans-serif; font-size: 4rem; color: var(--text); text-transform: uppercase; text-align: center; line-height: 0.9; }
+        .block-text { 
+            font-family: 'Anton', sans-serif; 
+            font-size: clamp(4rem, 7vw, 9rem); 
+            text-transform: uppercase; 
+            text-align: center; 
+            line-height: 0.85; 
+            letter-spacing: -2px;
+            padding: 20px;
+        }
 
-        .bento-yellow { background: var(--yellow); color: var(--accent); border-color: var(--accent); }
-        .bento-blue { background: var(--blue); color: var(--accent); border-color: var(--accent); }
+        /* Colors and Spans */
+        .b-green { background: var(--neon-green); color: var(--accent); grid-column: 1 / 2; grid-row: 1 / 3; }
+        .b-cyan { background: var(--cyan); color: var(--accent); grid-column: 3 / 4; grid-row: 1 / 3; }
+        .b-darkred { background: var(--dark-red); color: var(--text); grid-column: 3 / 4; grid-row: 3 / 5; }
+        
+        /* The super tall image column */
+        .b-tall { grid-column: 2 / 3; grid-row: 1 / 6; }
+        .b-wide { grid-column: 1 / 2; grid-row: 3 / 5; }
+
+        /* Images */
+        .block-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(150%); clip-path: inset(100% 0% 0% 0%); }
+        .block-item:hover .block-img { filter: none; }
+
+        /* Floating overlapping circle */
+        .floating-circle {
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, var(--cyan) 50%, #2b00ff 50%);
+            z-index: 50;
+        }
 
         /* --- 5. FINALE --- */
         .finale { background-color: var(--text); color: var(--accent); flex-direction: column; border-top: 20px solid var(--accent); }
         .finale h2 { font-family: 'Anton', sans-serif; font-size: 18vw; line-height: 0.8; letter-spacing: -5px; }
+
+
+        /* ==============================================================
+           MOBILE OPTIMIZATIONS
+           ============================================================== */
+        @media (max-width: 768px) {
+            * { cursor: auto !important; }
+            #custom-cursor, .crosshair, .scroll-dial, .vertical-text, .grid-deco-side { display: none !important; opacity: 0 !important; visibility: hidden; }
+
+            .hero { flex-direction: column; justify-content: center; gap: 5vh; }
+            .bg-watermark { font-size: 50vw; top: 50%; transform: translateY(-50%); }
+            .f-img-1, .f-img-2 { display: none !important; }
+
+            .spin-badge, .target-sticker { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; margin: 0 auto; }
+            .hero-title { font-size: 25vw; text-shadow: 6px 6px 0px var(--accent); -webkit-text-stroke: 2px var(--accent); z-index: 10; margin: 0; }
+
+            .retro-menu-container { justify-content: flex-start; padding-top: 10vh; }
+            .twelve-men-title { font-size: 18vw !important; margin-bottom: 5vh !important; transform: none !important; text-align: center; position: relative; z-index: 20; }
+            .tv-setup { display: none !important; }
+            .banner-group { position: relative !important; left: auto !important; top: auto !important; display: flex !important; align-items: center; width: 100%; z-index: 15; gap: 20px !important; }
+            
+            .banner-button { font-size: 10vw; padding: 15px; width: 85%; text-align: center; box-shadow: 4px 4px 0px rgba(0,0,0,0.8); transform: none !important; margin: 0 auto; }
+            .banner-1 { transform: rotate(-3deg) !important; }
+            .banner-2 { transform: rotate(2deg) !important; }
+            .banner-3 { transform: rotate(-2deg) !important; }
+            .banner-4 { transform: rotate(3deg) !important; }
+
+            .slash { width: 250vw; left: -75vw; padding: 1.5vh 0; }
+            .marquee-text { font-size: 10vw; }
+
+            /* Mobile Fix for New Brutalist Grid */
+            .grid-wrapper { padding: 10vw 5vw; }
+            .grid-deco { font-size: 0.6rem; top: 2vw; left: 2vw; }
+            
+            .brutalist-grid { 
+                display: flex; 
+                flex-direction: column; /* Stack them vertically */
+                gap: 20px; 
+            }
+            
+            /* Remove all grid spans so they behave as normal blocks */
+            .b-green, .b-cyan, .b-darkred, .b-tall, .b-wide {
+                grid-column: auto;
+                grid-row: auto;
+            }
+            
+            /* Give images fixed heights on mobile */
+            .b-tall { height: 60vh; }
+            .b-wide { height: 40vh; }
+            
+            .block-text { font-size: 18vw; padding: 30px 10px; }
+            .floating-circle { bottom: -20px; right: 10px; width: 80px; height: 80px; }
+
+            .finale h2 { font-size: 25vw; }
+        }
     </style>
 </head>
 <body>
@@ -126,12 +235,13 @@
         <img src="https://picsum.photos/800/600?random=2" class="float-img f-img-2" alt="chaos">
         
         <div class="spin-badge" id="spinny">100%<br>RAW<br>SPEED</div>
-        <div class="target-sticker"></div>
-
+        
         <h1 class="hero-title">
             <div class="line1">PURE</div>
             <div class="line2">CHAOS</div>
         </h1>
+
+        <div class="target-sticker"></div>
     </section>
 
     <section class="retro-menu-container">
@@ -139,13 +249,13 @@
         
         <div class="tv-setup" id="tv-group">
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Retro_television_set.png" class="tv-image" alt="Retro TV">
-            
-            <div class="banner-group">
-                <a href="#gallery" class="banner-button banner-1">GALLERY</a>
-                <a href="#stuff" class="banner-button banner-2">STUFF</a>
-                <a href="#about" class="banner-button banner-3">ABOUT</a>
-                <a href="#xtras" class="banner-button banner-4">XTRAS</a>
-            </div>
+        </div>
+
+        <div class="banner-group">
+            <a href="#gallery" class="banner-button banner-1">GALLERY</a>
+            <a href="#stuff" class="banner-button banner-2">STUFF</a>
+            <a href="#about" class="banner-button banner-3">ABOUT</a>
+            <a href="#xtras" class="banner-button banner-4">XTRAS</a>
         </div>
     </section>
 
@@ -157,16 +267,22 @@
     </section>
 
     <section class="grid-wrapper">
-        <div class="grid-deco">VELOCITY_SKEW: TRUE // ALIGNMENT: FALSE</div>
-        <div class="bento-grid">
-            <div class="skew-container span-2-col"><div class="bento-item bento-yellow bento-text">SCROLL<br>FAST</div></div>
-            <div class="skew-container span-2-row"><div class="bento-item"><img src="https://picsum.photos/500/900?random=4" class="bento-img reveal-img" alt="random"></div></div>
-            <div class="skew-container"><div class="bento-item bento-blue bento-text" style="font-size: 2rem;">ERROR<br>404</div></div>
-            <div class="skew-container span-2-col"><div class="bento-item"><img src="https://picsum.photos/800/400?random=5" class="bento-img reveal-img" alt="random"></div></div>
-            <div class="skew-container"><div class="bento-item bento-text">PURE<br>NOISE</div></div>
-            <div class="skew-container span-3-col"><div class="bento-item bento-text" style="font-size: 8vw;">NO RULES</div></div>
-            <div class="skew-container span-2-col"><div class="bento-item bento-yellow"><img src="https://picsum.photos/700/400?random=6" class="bento-img reveal-img" alt="random"></div></div>
-            <div class="skew-container"><div class="bento-item bento-blue bento-text">?</div></div>
+        <div class="grid-deco">VELOCITY SKEW: TRUE // ALIGNMENT: FALSE</div>
+        <div class="grid-deco-side">/// TRACKING ACTIVE ///</div>
+        
+        <div class="brutalist-grid">
+            
+            <div class="skew-container b-green"><div class="block-item border-none block-text">SCROLL<br>FAST</div></div>
+            <div class="skew-container b-wide"><div class="block-item border-red"><img src="https://picsum.photos/800/600?random=5" class="block-img reveal-img" alt="laptop"></div></div>
+            
+            <div class="skew-container b-tall"><div class="block-item border-white"><img src="https://picsum.photos/500/1200?random=4" class="block-img reveal-img" alt="train tracks"></div></div>
+            
+            <div class="skew-container b-cyan"><div class="block-item border-none block-text" style="font-size: clamp(3rem, 5vw, 6rem);">ERROR<br>404</div></div>
+            <div class="skew-container b-darkred">
+                <div class="block-item border-white block-text">PURE<br>NOISE</div>
+                <div class="floating-circle"></div>
+            </div>
+
         </div>
     </section>
 
@@ -182,24 +298,25 @@
         const tvGroup = document.getElementById('tv-group');
 
         document.addEventListener('mousemove', (e) => {
-            // Move Cursor
-            cursor.style.left = e.clientX + 'px'; 
-            cursor.style.top = e.clientY + 'px';
+            if (cursor) {
+                cursor.style.left = e.clientX + 'px'; 
+                cursor.style.top = e.clientY + 'px';
+            }
 
-            // TV Parallax based on mouse
-            const x = (window.innerWidth / 2 - e.clientX);
-            const y = (window.innerHeight / 2 - e.clientY);
-            if(menTitle) menTitle.style.transform = `translate(${x / 40}px, ${y / 40}px) scaleY(1.2)`;
-            if(tvGroup) tvGroup.style.transform = `translate(${x / 60}px, ${y / 60}px)`;
+            if (window.innerWidth > 768) {
+                const x = (window.innerWidth / 2 - e.clientX);
+                const y = (window.innerHeight / 2 - e.clientY);
+                if(menTitle) menTitle.style.transform = `translate(${x / 40}px, ${y / 40}px) scaleY(1.2)`;
+                if(tvGroup) tvGroup.style.transform = `translate(${x / 60}px, ${y / 60}px)`;
+            }
         });
 
-        // Expand cursor on links/buttons
         document.querySelectorAll('a, .hero-title').forEach(link => {
             link.addEventListener('mouseenter', () => {
-                cursor.style.width = '120px'; cursor.style.height = '120px';
+                if(cursor) { cursor.style.width = '120px'; cursor.style.height = '120px'; }
             });
             link.addEventListener('mouseleave', () => {
-                cursor.style.width = '60px'; cursor.style.height = '60px';
+                if(cursor) { cursor.style.width = '60px'; cursor.style.height = '60px'; }
             });
         });
 
@@ -214,15 +331,15 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // --- SCROLL PHYSICS & LOGIC ---
-
-        // 1. Progress Bar & The Massive Dial
         lenis.on('scroll', (e) => {
             const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight));
             document.getElementById('progressBar').style.width = (scrollPercentage * 100) + '%';
-            document.getElementById('dial').style.transform = `rotate(${scrollPercentage * 360}deg)`;
+            
+            const dial = document.getElementById('dial');
+            if(dial) dial.style.transform = `rotate(${scrollPercentage * 360}deg)`;
         });
 
-        // 2. Velocity Skewing on the Grid
+        // 2. Velocity Skewing on the New Brutalist Grid
         let proxy = { skew: 0 },
             skewSetter = gsap.quickSetter(".skew-container", "skewY", "deg"), 
             clamp = gsap.utils.clamp(-20, 20); 
@@ -237,13 +354,11 @@
           }
         });
 
-        // 3. Scroll-Direction Spin Badge
         gsap.to("#spinny", {
             rotation: 1080, 
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.5 }
         });
 
-        // 4. Clip-Path Image Reveals
         gsap.utils.toArray('.reveal-img').forEach(img => {
             gsap.to(img, {
                 clipPath: "inset(0% 0% 0% 0%)",
@@ -253,23 +368,26 @@
         });
 
         // --- GSAP TIMELINES ---
-        gsap.to(".target-sticker", { y: -400, x: 200, rotation: 180, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.2 } });
+        let isMobile = window.innerWidth <= 768;
+
+        if (!isMobile) {
+            gsap.to(".target-sticker", { y: -400, x: 200, rotation: 180, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.2 } });
+            gsap.to(".f-img-1", { y: -200, rotation: -30, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            gsap.to(".f-img-2", { y: -300, rotation: 40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+        }
+
         gsap.to(".line1", { x: -300, opacity: 0, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
         gsap.to(".line2", { x: 300, opacity: 0, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
-        gsap.to(".f-img-1", { y: -200, rotation: -30, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-        gsap.to(".f-img-2", { y: -300, rotation: 40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
         gsap.to(".bg-watermark", { x: -500, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
 
-        // Slashed Marquees Pin Animation
         const tlSlashes = gsap.timeline({ scrollTrigger: { trigger: ".slashes", start: "top center", end: "bottom top", scrub: 1, pin: true } });
         tlSlashes.to(".slash-1", { rotation: -35, scale: 1.5, ease: "none" }, 0).to(".slash-2", { rotation: 35, scale: 1.5, ease: "none" }, 0).to("body", { backgroundColor: "#000", duration: 0.5 }, 0.5);
 
-        // Grid Entrance
+        // New Grid Entrance
         gsap.utils.toArray('.skew-container').forEach((item, i) => {
-            gsap.from(item, { y: 150, opacity: 0, rotation: i % 2 === 0 ? 5 : -5, scrollTrigger: { trigger: item, start: "top 90%", end: "top 60%", scrub: 1 } });
+            gsap.from(item, { y: 150, opacity: 0, scrollTrigger: { trigger: item, start: "top 90%", end: "top 60%", scrub: 1 } });
         });
 
-        // Finale
         gsap.from(".fin-text", { scale: 0.5, y: 200, opacity: 0, stagger: 0.2, scrollTrigger: { trigger: ".finale", start: "top 80%", end: "bottom bottom", scrub: 1 } });
 
     </script>
