@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE ULTIMATE MAXIMALIST OVERLOAD</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap');
 
@@ -31,136 +30,105 @@
         }
         body::-webkit-scrollbar { display: none; }
 
+        /* --- GLOBAL BACKGROUND FILLERS --- */
+        .global-bg-text {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            font-family: 'Anton', sans-serif; font-size: 35vw; line-height: 0.8;
+            color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.05);
+            white-space: nowrap; z-index: 0; pointer-events: none;
+        }
+
         /* --- UI DEBRIS & CURSOR --- */
-        .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png'); opacity: 0.08; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; }
+        /* Swapped Wikipedia image for a fast SVG data URI noise */
+        .noise { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05; pointer-events: none; z-index: 9999; mix-blend-mode: multiply; 
+        }
+        
         .cursor-invert { position: fixed; width: 60px; height: 60px; border-radius: 50%; background: #fff; mix-blend-mode: difference; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; }
         .scroll-progress { position: fixed; top: 0; left: 0; height: 8px; background: var(--yellow); z-index: 9998; width: 0%; border-bottom: 2px solid var(--accent); }
-        .crosshair { position: fixed; width: 30px; height: 30px; border: 2px solid var(--text); z-index: 9900; pointer-events: none; opacity: 0.5; }
+        .crosshair { position: fixed; width: 30px; height: 30px; border: 2px solid var(--text); z-index: 9000; pointer-events: none; opacity: 0.5; }
         .ch-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; } .ch-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
         .ch-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; } .ch-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
         .vertical-text { position: fixed; right: 10px; top: 50%; transform: translateY(-50%); writing-mode: vertical-rl; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 4px; color: var(--accent); z-index: 9000; mix-blend-mode: overlay; }
-
-        /* MASSIVE SCROLL DIAL */
         .scroll-dial { position: fixed; top: -20vh; left: -20vw; font-size: 150vw; line-height: 1; color: var(--accent); opacity: 0.05; z-index: 0; pointer-events: none; font-family: sans-serif; transform-origin: center center; }
 
         section { width: 100vw; min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
         /* --- 1. HERO SECTION --- */
-        .hero { z-index: 10; }
-        .bg-watermark { position: absolute; font-family: 'Anton', sans-serif; font-size: 40vw; color: transparent; -webkit-text-stroke: 2px rgba(0,0,0,0.2); white-space: nowrap; z-index: 1; }
-        .hero-title { font-family: 'Anton', sans-serif; font-size: 15vw; line-height: 0.85; text-align: center; text-transform: uppercase; color: var(--yellow); -webkit-text-stroke: 4px var(--accent); text-shadow: 15px 15px 0px var(--accent); z-index: 5; position: relative; }
+        .hero { z-index: 10; padding-top: 10vh; }
+        .hero-title { font-family: 'Anton', sans-serif; font-size: 16vw; line-height: 0.85; text-align: center; text-transform: uppercase; color: var(--yellow); -webkit-text-stroke: 5px var(--accent); text-shadow: 15px 15px 0px var(--accent); z-index: 5; position: relative; }
         
-        .float-img { position: absolute; border: 4px solid var(--accent); box-shadow: 10px 10px 0px var(--accent); filter: grayscale(100%) contrast(120%); z-index: 4; transition: filter 0.3s; }
+        .float-img { position: absolute; border: 5px solid var(--accent); box-shadow: 12px 12px 0px var(--accent); filter: grayscale(100%) contrast(150%); z-index: 4; transition: filter 0.3s; background: var(--accent); }
         .float-img:hover { filter: none; z-index: 20; }
-        .f-img-1 { top: 10%; left: 5%; width: 20vw; transform: rotate(-10deg); }
-        .f-img-2 { bottom: 15%; right: 10%; width: 25vw; transform: rotate(15deg); }
+        .f-img-1 { top: 15%; left: 5%; width: 22vw; transform: rotate(-8deg); }
+        .f-img-2 { bottom: 10%; right: 5%; width: 28vw; transform: rotate(12deg); }
 
-        .spin-badge { position: absolute; top: 30%; left: 20%; width: 150px; height: 150px; background: var(--blue); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; text-align: center; border: 4px dashed var(--accent); z-index: 6; }
-        .target-sticker { position: absolute; bottom: 25%; left: 30%; width: 100px; height: 100px; background: var(--yellow); border-radius: 50%; z-index: 8; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent); box-shadow: 5px 5px 0px var(--accent); }
-        .target-sticker::after { content: '⌖'; font-size: 3rem; color: var(--accent); }
+        .spin-badge { position: absolute; top: 20%; right: 20%; width: 160px; height: 160px; background: var(--cyan); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.3rem; text-align: center; border: 5px dashed var(--accent); z-index: 6; }
+        .target-sticker { position: absolute; bottom: 25%; left: 25%; width: 120px; height: 120px; background: var(--yellow); border-radius: 50%; z-index: 8; display: flex; align-items: center; justify-content: center; border: 3px solid var(--accent); box-shadow: 8px 8px 0px var(--accent); }
+        .target-sticker::after { content: '⌖'; font-size: 4rem; color: var(--accent); }
+        .mini-badge { position: absolute; font-family: 'Anton'; background: var(--accent); color: var(--text); padding: 5px 15px; font-size: 1.5rem; border: 2px solid var(--text); transform: rotate(-15deg); z-index: 7; }
+        .mb-1 { top: 40%; left: 10%; }
+        .mb-2 { bottom: 20%; right: 25%; transform: rotate(25deg); background: var(--text); color: var(--accent); border-color: var(--accent); }
 
         /* --- 2. RETRO TV SECTION --- */
-        .retro-menu-container { flex-direction: column; z-index: 15; background: transparent; }
-        .twelve-men-title { font-family: 'Anton', sans-serif; font-size: 10vw; color: #fff; text-transform: uppercase; text-shadow: 0px 10px 0px var(--accent); letter-spacing: -5px; transform: scaleY(1.2); z-index: 5; margin-bottom: -150px; }
-        .tv-setup { position: relative; width: 800px; height: 600px; display: flex; align-items: center; justify-content: center; }
-        .tv-image { position: absolute; left: -10%; width: 500px; z-index: 20; filter: drop-shadow(20px 20px 0px rgba(0,0,0,0.5)); }
+        .retro-menu-container { flex-direction: column; z-index: 15; background: transparent; margin-top: -10vh; }
+        .twelve-men-title { font-family: 'Anton', sans-serif; font-size: 12vw; color: #fff; text-transform: uppercase; text-shadow: 6px 6px 0px var(--accent); letter-spacing: -6px; transform: scaleY(1.3); z-index: 5; position: relative; margin-bottom: 20px; }
         
-        .banner-group { position: absolute; left: 20%; top: 20%; display: flex; flex-direction: column; gap: 10px; z-index: 15; }
-        .banner-button { display: block; text-decoration: none; font-family: 'Anton', sans-serif; font-size: 4rem; text-transform: uppercase; padding: 10px 40px; color: #000; background-color: #fff; transition: all 0.2s ease; clip-path: polygon(0% 15%, 100% 0%, 95% 100%, 5% 85%); white-space: nowrap; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); }
-        
-        .banner-1 { transform: rotate(-8deg) translateX(50px); }
-        .banner-2 { transform: rotate(2deg) translateX(100px); background-color: var(--btn-stuff-color); clip-path: polygon(5% 0%, 100% 10%, 95% 100%, 0% 90%); }
-        .banner-3 { transform: rotate(-4deg) translateX(80px); }
-        .banner-4 { transform: rotate(6deg) translateX(30px); }
+        .tv-wrapper { position: relative; width: 1000px; height: 500px; display: flex; align-items: center; margin-top: -40px; }
+        .tv-image { position: absolute; left: -50px; width: 550px; height: 450px; object-fit: contain; z-index: 20; filter: drop-shadow(25px 25px 0px rgba(0,0,0,0.6)); }
+        .tv-fallback { position: absolute; left: 0; width: 450px; height: 350px; background: #111; border: 15px solid #333; border-radius: 30px; box-shadow: 20px 20px 0px var(--accent); z-index: 19; display: none; }
 
-        .banner-button:hover { color: #fff; background-color: #000; transform: scale(1.05) translate(20px, -5px) skew(-5deg); }
-        .banner-2:hover { background-color: #000; color: #aaa; }
+        .banner-group { position: absolute; left: 380px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 15; }
+        .banner-button { display: block; text-decoration: none; font-family: 'Anton', sans-serif; font-size: 5rem; line-height: 1; text-transform: uppercase; padding: 10px 50px; color: #000; background-color: #fff; transition: all 0.2s ease; clip-path: polygon(0% 10%, 100% 0%, 95% 100%, 5% 90%); white-space: nowrap; box-shadow: 8px 8px 0px var(--accent); }
+        .banner-1 { transform: rotate(-6deg) translateX(0px); }
+        .banner-2 { transform: rotate(3deg) translateX(60px); background-color: var(--btn-stuff-color); clip-path: polygon(2% 0%, 100% 5%, 98% 100%, 0% 95%); }
+        .banner-3 { transform: rotate(-3deg) translateX(30px); background-color: #000; color: #fff; }
+        .banner-4 { transform: rotate(5deg) translateX(-10px); }
+        .banner-button:hover { filter: invert(1); transform: scale(1.05) translate(20px, -5px); }
 
         /* --- 3. SLASHES SECTION --- */
-        .slashes { background: transparent; }
+        .slashes { background: transparent; min-height: 60vh; margin-top: -5vh; }
         .slash-container { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; z-index: 5; }
-        .slash { background: var(--accent); color: var(--text); width: 120vw; padding: 3vh 0; left: -10vw; position: absolute; transform-origin: center; border: 5px solid var(--text); overflow: hidden; display: flex; white-space: nowrap; box-shadow: 0px 30px 60px rgba(0,0,0,0.8); }
-        .slash-1 { transform: rotate(-15deg); z-index: 2; }
-        .slash-2 { transform: rotate(15deg); background: var(--yellow); color: var(--accent); border-color: var(--accent); z-index: 1; }
+        .slash { background: var(--accent); color: var(--text); width: 120vw; padding: 4vh 0; left: -10vw; position: absolute; transform-origin: center; border: 6px solid var(--text); overflow: hidden; display: flex; white-space: nowrap; box-shadow: 0px 30px 60px rgba(0,0,0,0.8); }
+        .slash-1 { transform: rotate(-12deg); z-index: 2; }
+        .slash-2 { transform: rotate(12deg); background: var(--yellow); color: var(--accent); border-color: var(--accent); z-index: 1; }
         .marquee-inner { display: flex; width: max-content; }
-        .marquee-text { font-family: 'Anton', sans-serif; font-size: 6vw; padding: 0 2vw; text-transform: uppercase; }
+        .marquee-text { font-family: 'Anton', sans-serif; font-size: 7vw; padding: 0 2vw; text-transform: uppercase; }
         @keyframes scroll-left { to { transform: translateX(-50%); } } @keyframes scroll-right { to { transform: translateX(0); } }
         .slash-1 .marquee-inner { animation: scroll-left 8s linear infinite; } .slash-2 .marquee-inner { transform: translateX(-50%); animation: scroll-right 8s linear infinite; }
 
-        /* --- 4. NEW BRUTALIST GRID SECTION --- */
-        .grid-wrapper { background: var(--accent); padding: 5vw; width: 100%; min-height: 150vh; z-index: 20; position: relative;}
+        /* --- 4. BRUTALIST GRID SECTION --- */
+        .grid-wrapper { background: var(--accent); padding: 10vw 5vw; width: 100%; min-height: 120vh; z-index: 20; position: relative;}
+        .grid-deco { position: absolute; top: 3vw; left: 5vw; color: var(--neon-green); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; z-index: 30;}
+        .grid-deco-side { position: absolute; top: 20vw; right: 2vw; color: var(--neon-green); font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; writing-mode: vertical-rl; z-index: 30;}
         
-        /* The thin neon tracking lines at the top and right */
-        .grid-deco { position: absolute; top: 3vw; left: 5vw; color: var(--neon-green); font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; z-index: 30;}
-        .grid-deco-side { position: absolute; top: 20vw; right: 2vw; color: var(--neon-green); font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase; writing-mode: vertical-rl; z-index: 30;}
-        
-        .brutalist-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            grid-auto-rows: 250px; 
-            gap: 30px; 
-            max-width: 1400px; 
-            margin: 0 auto;
-            position: relative;
-            perspective: 1000px; 
-            margin-top: 5vh;
-        }
-
+        .brutalist-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 250px; gap: 30px; max-width: 1400px; margin: 0 auto; position: relative; perspective: 1000px; margin-top: 5vh; }
         .skew-container { display: flex; align-items: stretch; justify-content: stretch; will-change: transform; }
         
-        /* The new stark blocks */
-        .block-item { 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            width: 100%; 
-            transition: transform 0.2s; 
-        }
+        .block-item { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.2s; background: #222; }
+        .border-red { border: 3px solid #ff3333; }
+        .border-white { border: 5px solid var(--text); }
+        .border-none { border: none; background: transparent; }
 
-        /* Specific borders mimicking the reference */
-        .border-red { border: 2px solid #ff3333; }
-        .border-white { border: 4px solid var(--text); }
-        .border-none { border: none; }
+        .block-text { font-family: 'Anton', sans-serif; font-size: clamp(4rem, 7vw, 9rem); text-transform: uppercase; text-align: center; line-height: 0.85; letter-spacing: -2px; padding: 20px; }
 
-        .block-text { 
-            font-family: 'Anton', sans-serif; 
-            font-size: clamp(4rem, 7vw, 9rem); 
-            text-transform: uppercase; 
-            text-align: center; 
-            line-height: 0.85; 
-            letter-spacing: -2px;
-            padding: 20px;
-        }
-
-        /* Colors and Spans */
         .b-green { background: var(--neon-green); color: var(--accent); grid-column: 1 / 2; grid-row: 1 / 3; }
         .b-cyan { background: var(--cyan); color: var(--accent); grid-column: 3 / 4; grid-row: 1 / 3; }
         .b-darkred { background: var(--dark-red); color: var(--text); grid-column: 3 / 4; grid-row: 3 / 5; }
-        
-        /* The super tall image column */
         .b-tall { grid-column: 2 / 3; grid-row: 1 / 6; }
         .b-wide { grid-column: 1 / 2; grid-row: 3 / 5; }
 
-        /* Images */
         .block-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(150%); clip-path: inset(100% 0% 0% 0%); }
         .block-item:hover .block-img { filter: none; }
 
-        /* Floating overlapping circle */
-        .floating-circle {
-            position: absolute;
-            bottom: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(180deg, var(--cyan) 50%, #2b00ff 50%);
-            z-index: 50;
-        }
+        .floating-circle { position: absolute; bottom: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(180deg, var(--cyan) 50%, #2b00ff 50%); z-index: 50; border: 4px solid var(--accent); }
 
         /* --- 5. FINALE --- */
-        .finale { background-color: var(--text); color: var(--accent); flex-direction: column; border-top: 20px solid var(--accent); }
-        .finale h2 { font-family: 'Anton', sans-serif; font-size: 18vw; line-height: 0.8; letter-spacing: -5px; }
+        .finale { background-color: var(--text); color: var(--accent); flex-direction: column; border-top: 25px solid var(--accent); min-height: 80vh; }
+        .finale h2 { font-family: 'Anton', sans-serif; font-size: 20vw; line-height: 0.8; letter-spacing: -5px; }
 
 
         /* ==============================================================
@@ -168,73 +136,49 @@
            ============================================================== */
         @media (max-width: 768px) {
             * { cursor: auto !important; }
-            #custom-cursor, .crosshair, .scroll-dial, .vertical-text, .grid-deco-side { display: none !important; opacity: 0 !important; visibility: hidden; }
-
-            .hero { flex-direction: column; justify-content: center; gap: 5vh; }
-            .bg-watermark { font-size: 50vw; top: 50%; transform: translateY(-50%); }
-            .f-img-1, .f-img-2 { display: none !important; }
-
-            .spin-badge, .target-sticker { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; margin: 0 auto; }
-            .hero-title { font-size: 25vw; text-shadow: 6px 6px 0px var(--accent); -webkit-text-stroke: 2px var(--accent); z-index: 10; margin: 0; }
-
-            .retro-menu-container { justify-content: flex-start; padding-top: 10vh; }
-            .twelve-men-title { font-size: 18vw !important; margin-bottom: 5vh !important; transform: none !important; text-align: center; position: relative; z-index: 20; }
-            .tv-setup { display: none !important; }
-            .banner-group { position: relative !important; left: auto !important; top: auto !important; display: flex !important; align-items: center; width: 100%; z-index: 15; gap: 20px !important; }
-            
-            .banner-button { font-size: 10vw; padding: 15px; width: 85%; text-align: center; box-shadow: 4px 4px 0px rgba(0,0,0,0.8); transform: none !important; margin: 0 auto; }
-            .banner-1 { transform: rotate(-3deg) !important; }
-            .banner-2 { transform: rotate(2deg) !important; }
-            .banner-3 { transform: rotate(-2deg) !important; }
-            .banner-4 { transform: rotate(3deg) !important; }
-
-            .slash { width: 250vw; left: -75vw; padding: 1.5vh 0; }
+            #custom-cursor, .crosshair, .scroll-dial, .vertical-text, .grid-deco-side, .mini-badge, .global-bg-text { display: none !important; }
+            .hero { flex-direction: column; justify-content: center; gap: 5vh; padding-top: 5vh; }
+            .f-img-1, .f-img-2 { display: none !important; } 
+            .spin-badge, .target-sticker { position: relative !important; top: auto !important; bottom: auto !important; left: auto !important; right: auto !important; margin: 0 auto; }
+            .hero-title { font-size: 25vw; text-shadow: 5px 5px 0px var(--accent); -webkit-text-stroke: 2px var(--accent); margin: 0; z-index: 10; }
+            .retro-menu-container { justify-content: flex-start; margin-top: 5vh; min-height: auto; padding-bottom: 10vh; }
+            .twelve-men-title { font-size: 18vw !important; margin-bottom: 30px !important; transform: none !important; text-align: center; }
+            .tv-wrapper { display: flex; flex-direction: column; width: 100%; height: auto; margin: 0; }
+            .tv-image, .tv-fallback { display: none !important; } 
+            .banner-group { position: relative !important; left: 0 !important; top: 0 !important; transform: none !important; align-items: center; width: 100%; gap: 15px; }
+            .banner-button { font-size: 12vw; padding: 15px; width: 90%; text-align: center; transform: none !important; margin: 0 auto; clip-path: polygon(0% 5%, 100% 0%, 98% 100%, 2% 95%); }
+            .banner-1 { transform: rotate(-2deg) !important; } .banner-2 { transform: rotate(2deg) !important; } .banner-3 { transform: rotate(-1deg) !important; } .banner-4 { transform: rotate(3deg) !important; }
+            .slashes { min-height: 40vh; margin-top: 0; }
+            .slash { width: 250vw; left: -75vw; padding: 2vh 0; }
             .marquee-text { font-size: 10vw; }
-
-            /* Mobile Fix for New Brutalist Grid */
-            .grid-wrapper { padding: 10vw 5vw; }
-            .grid-deco { font-size: 0.6rem; top: 2vw; left: 2vw; }
-            
-            .brutalist-grid { 
-                display: flex; 
-                flex-direction: column; /* Stack them vertically */
-                gap: 20px; 
-            }
-            
-            /* Remove all grid spans so they behave as normal blocks */
-            .b-green, .b-cyan, .b-darkred, .b-tall, .b-wide {
-                grid-column: auto;
-                grid-row: auto;
-            }
-            
-            /* Give images fixed heights on mobile */
-            .b-tall { height: 60vh; }
-            .b-wide { height: 40vh; }
-            
-            .block-text { font-size: 18vw; padding: 30px 10px; }
-            .floating-circle { bottom: -20px; right: 10px; width: 80px; height: 80px; }
-
+            .grid-wrapper { padding: 10vw 5vw; min-height: auto; }
+            .grid-deco { font-size: 0.6rem; top: 3vw; left: 3vw; }
+            .brutalist-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 10vw; }
+            .b-green, .b-cyan, .b-darkred, .b-tall, .b-wide { grid-column: auto; grid-row: auto; }
+            .b-tall { height: 60vh; } .b-wide { height: 40vh; }
+            .block-text { font-size: 18vw !important; padding: 30px 10px; }
+            .floating-circle { bottom: -20px; right: 10px; width: 100px; height: 100px; }
             .finale h2 { font-size: 25vw; }
         }
     </style>
 </head>
 <body>
 
-    <div class="scroll-dial" id="dial">✱</div>
+    <div class="global-bg-text" id="bgText">DO NOT BLINK /// KEEP SCROLLING ///</div>
     <div class="scroll-progress" id="progressBar"></div>
     <div class="noise"></div>
     <div class="cursor-invert" id="custom-cursor"></div>
-    
     <div class="crosshair ch-tl"></div> <div class="crosshair ch-tr"></div>
     <div class="crosshair ch-bl"></div> <div class="crosshair ch-br"></div>
     <div class="vertical-text">/// VELOCITY TRACKING ACTIVE ///</div>
 
     <section class="hero">
-        <div class="bg-watermark">OVERLOAD OVERLOAD</div>
-        <img src="https://picsum.photos/600/800?random=1" class="float-img f-img-1" alt="chaos">
-        <img src="https://picsum.photos/800/600?random=2" class="float-img f-img-2" alt="chaos">
+        <img src="https://placehold.co/600x800/222/555?text=IMG_01" class="float-img f-img-1" alt="chaos">
+        <img src="https://placehold.co/800x600/222/555?text=IMG_02" class="float-img f-img-2" alt="chaos">
         
         <div class="spin-badge" id="spinny">100%<br>RAW<br>SPEED</div>
+        <div class="mini-badge mb-1">NO RULES</div>
+        <div class="mini-badge mb-2">SYSTEM.ERR</div>
         
         <h1 class="hero-title">
             <div class="line1">PURE</div>
@@ -246,16 +190,15 @@
 
     <section class="retro-menu-container">
         <h2 class="twelve-men-title" id="title-men">TWELVE MEN</h2>
-        
-        <div class="tv-setup" id="tv-group">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Retro_television_set.png" class="tv-image" alt="Retro TV">
-        </div>
-
-        <div class="banner-group">
-            <a href="#gallery" class="banner-button banner-1">GALLERY</a>
-            <a href="#stuff" class="banner-button banner-2">STUFF</a>
-            <a href="#about" class="banner-button banner-3">ABOUT</a>
-            <a href="#xtras" class="banner-button banner-4">XTRAS</a>
+        <div class="tv-wrapper" id="tv-group">
+            <div class="tv-fallback" id="tv-fail"></div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Retro_television_set.png" class="tv-image" alt="Retro TV" loading="lazy" onerror="document.getElementById('tv-fail').style.display='block'; this.style.display='none';">
+            <div class="banner-group">
+                <a href="#gallery" class="banner-button banner-1">GALLERY</a>
+                <a href="#stuff" class="banner-button banner-2">STUFF</a>
+                <a href="#about" class="banner-button banner-3">ABOUT</a>
+                <a href="#xtras" class="banner-button banner-4">XTRAS</a>
+            </div>
         </div>
     </section>
 
@@ -271,18 +214,14 @@
         <div class="grid-deco-side">/// TRACKING ACTIVE ///</div>
         
         <div class="brutalist-grid">
-            
             <div class="skew-container b-green"><div class="block-item border-none block-text">SCROLL<br>FAST</div></div>
-            <div class="skew-container b-wide"><div class="block-item border-red"><img src="https://picsum.photos/800/600?random=5" class="block-img reveal-img" alt="laptop"></div></div>
-            
-            <div class="skew-container b-tall"><div class="block-item border-white"><img src="https://picsum.photos/500/1200?random=4" class="block-img reveal-img" alt="train tracks"></div></div>
-            
+            <div class="skew-container b-wide"><div class="block-item border-red"><img src="https://placehold.co/800x600/111/444?text=IMG_WIDE" class="block-img reveal-img" alt="laptop" loading="lazy"></div></div>
+            <div class="skew-container b-tall"><div class="block-item border-white"><img src="https://placehold.co/500x1200/111/444?text=IMG_TALL" class="block-img reveal-img" alt="tall image" loading="lazy"></div></div>
             <div class="skew-container b-cyan"><div class="block-item border-none block-text" style="font-size: clamp(3rem, 5vw, 6rem);">ERROR<br>404</div></div>
             <div class="skew-container b-darkred">
                 <div class="block-item border-white block-text">PURE<br>NOISE</div>
                 <div class="floating-circle"></div>
             </div>
-
         </div>
     </section>
 
@@ -291,59 +230,46 @@
         <h2 class="fin-text">UP</h2>
     </section>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+
     <script>
-        // --- CURSOR & PARALLAX ---
         const cursor = document.getElementById('custom-cursor');
         const menTitle = document.getElementById('title-men');
         const tvGroup = document.getElementById('tv-group');
+        let isMobile = window.innerWidth <= 768;
 
         document.addEventListener('mousemove', (e) => {
-            if (cursor) {
-                cursor.style.left = e.clientX + 'px'; 
-                cursor.style.top = e.clientY + 'px';
-            }
-
-            if (window.innerWidth > 768) {
-                const x = (window.innerWidth / 2 - e.clientX);
-                const y = (window.innerHeight / 2 - e.clientY);
-                if(menTitle) menTitle.style.transform = `translate(${x / 40}px, ${y / 40}px) scaleY(1.2)`;
-                if(tvGroup) tvGroup.style.transform = `translate(${x / 60}px, ${y / 60}px)`;
+            if (cursor && !isMobile) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; }
+            if (!isMobile) {
+                const x = (window.innerWidth / 2 - e.clientX), y = (window.innerHeight / 2 - e.clientY);
+                if(menTitle) menTitle.style.transform = `translate(${x / 40}px, ${y / 40}px) scaleY(1.3)`;
+                if(tvGroup) tvGroup.style.transform = `translate(${x / 70}px, ${y / 70}px)`;
             }
         });
 
-        document.querySelectorAll('a, .hero-title').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                if(cursor) { cursor.style.width = '120px'; cursor.style.height = '120px'; }
-            });
-            link.addEventListener('mouseleave', () => {
-                if(cursor) { cursor.style.width = '60px'; cursor.style.height = '60px'; }
-            });
+        document.querySelectorAll('a, .hero-title, .banner-button').forEach(link => {
+            link.addEventListener('mouseenter', () => { if(cursor && !isMobile) { cursor.style.width = '120px'; cursor.style.height = '120px'; } });
+            link.addEventListener('mouseleave', () => { if(cursor && !isMobile) { cursor.style.width = '60px'; cursor.style.height = '60px'; } });
         });
 
-        // --- LENIS SCROLL SETUP ---
-        const lenis = new Lenis({
-            duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true,
-        });
-
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true });
         lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time) => { lenis.raf(time * 1000) });
         gsap.ticker.lagSmoothing(0);
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- SCROLL PHYSICS & LOGIC ---
         lenis.on('scroll', (e) => {
             const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight));
             document.getElementById('progressBar').style.width = (scrollPercentage * 100) + '%';
-            
+            const bgText = document.getElementById('bgText');
+            if(bgText) bgText.style.transform = `translate(-50%, calc(-50% + ${scrollPercentage * 300}px)) rotate(-90deg)`;
             const dial = document.getElementById('dial');
             if(dial) dial.style.transform = `rotate(${scrollPercentage * 360}deg)`;
         });
 
-        // 2. Velocity Skewing on the New Brutalist Grid
-        let proxy = { skew: 0 },
-            skewSetter = gsap.quickSetter(".skew-container", "skewY", "deg"), 
-            clamp = gsap.utils.clamp(-20, 20); 
-
+        let proxy = { skew: 0 }, skewSetter = gsap.quickSetter(".skew-container", "skewY", "deg"), clamp = gsap.utils.clamp(-20, 20); 
         ScrollTrigger.create({
           onUpdate: (self) => {
             let skew = clamp(self.getVelocity() / -150); 
@@ -354,42 +280,27 @@
           }
         });
 
-        gsap.to("#spinny", {
-            rotation: 1080, 
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.5 }
-        });
+        gsap.to("#spinny", { rotation: 1080, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.5 } });
 
         gsap.utils.toArray('.reveal-img').forEach(img => {
-            gsap.to(img, {
-                clipPath: "inset(0% 0% 0% 0%)",
-                ease: "power2.inOut",
-                scrollTrigger: { trigger: img, start: "top 95%", end: "center center", scrub: 1 }
-            });
+            gsap.to(img, { clipPath: "inset(0% 0% 0% 0%)", ease: "power2.inOut", scrollTrigger: { trigger: img, start: "top 95%", end: "center center", scrub: 1 } });
         });
-
-        // --- GSAP TIMELINES ---
-        let isMobile = window.innerWidth <= 768;
 
         if (!isMobile) {
             gsap.to(".target-sticker", { y: -400, x: 200, rotation: 180, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.2 } });
-            gsap.to(".f-img-1", { y: -200, rotation: -30, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-            gsap.to(".f-img-2", { y: -300, rotation: 40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            gsap.to(".mb-1", { y: -300, rotation: 40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.5 } });
+            gsap.to(".mb-2", { y: -200, rotation: -40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.5 } });
+            gsap.to(".f-img-1", { y: -150, rotation: -30, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            gsap.to(".f-img-2", { y: -250, rotation: 40, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
         }
 
         gsap.to(".line1", { x: -300, opacity: 0, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
         gsap.to(".line2", { x: 300, opacity: 0, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 } });
-        gsap.to(".bg-watermark", { x: -500, scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-
         const tlSlashes = gsap.timeline({ scrollTrigger: { trigger: ".slashes", start: "top center", end: "bottom top", scrub: 1, pin: true } });
         tlSlashes.to(".slash-1", { rotation: -35, scale: 1.5, ease: "none" }, 0).to(".slash-2", { rotation: 35, scale: 1.5, ease: "none" }, 0).to("body", { backgroundColor: "#000", duration: 0.5 }, 0.5);
 
-        // New Grid Entrance
-        gsap.utils.toArray('.skew-container').forEach((item, i) => {
-            gsap.from(item, { y: 150, opacity: 0, scrollTrigger: { trigger: item, start: "top 90%", end: "top 60%", scrub: 1 } });
-        });
-
+        gsap.utils.toArray('.skew-container').forEach((item, i) => { gsap.from(item, { y: 150, opacity: 0, scrollTrigger: { trigger: item, start: "top 90%", end: "top 60%", scrub: 1 } }); });
         gsap.from(".fin-text", { scale: 0.5, y: 200, opacity: 0, stagger: 0.2, scrollTrigger: { trigger: ".finale", start: "top 80%", end: "bottom bottom", scrub: 1 } });
-
     </script>
 </body>
 </html>
